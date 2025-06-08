@@ -1,6 +1,6 @@
 {
-  "name": "Menú de Inicio",
-  "short_name": "Inicio",
+  "name": "CityPASS",
+  "short_name": "CP",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#4c0c58",
