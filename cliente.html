@@ -19,21 +19,48 @@
       const manualBtn = document.getElementById('submit-code');
 
       const codeReader = new BrowserQRCodeReader();
+      let currentStream = null;
+
+      function stopCamera() {
+        if (currentStream) {
+          currentStream.getTracks().forEach(track => track.stop());
+          currentStream = null;
+        }
+      }
+
+      async function startQRScanner() {
+        qrSection.style.display = 'block';
+        try {
+          const result = await codeReader.decodeFromVideoDevice(undefined, video, (result, err, controls) => {
+            if (result) {
+              const code = result.getText();
+              qrResult.textContent = `Código QR leído: ${code}`;
+              codeReader.reset();
+              stopCamera();
+              // Aquí puedes redirigir o validar el código
+              // window.location.href = `/cliente.html?id=${code}`;
+            }
+          });
+
+          const stream = video.srcObject;
+          if (stream) {
+            currentStream = stream;
+          }
+        } catch (error) {
+          qrResult.textContent = `Error al acceder a la cámara: ${error.message}`;
+        }
+      }
 
       qrBtn.addEventListener('click', () => {
-        qrSection.style.display = 'block';
-        codeReader.decodeFromVideoDevice(null, video, (result, err) => {
-          if (result) {
-            qrResult.textContent = `Código QR leído: ${result.getText()}`;
-            codeReader.reset();
-          }
-        });
+        startQRScanner();
       });
 
       manualBtn.addEventListener('click', () => {
         const code = manualInput.value.trim();
         if (code) {
           qrResult.textContent = `Código ingresado: ${code}`;
+          // Aquí puedes redirigir o validar el código
+          // window.location.href = `/cliente.html?id=${code}`;
         }
       });
     });
