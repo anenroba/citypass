@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ingreso Cliente</title>
+  <link rel="stylesheet" href="estilos.css" />
+  <script type="module">
+    import { BrowserQRCodeReader } from 'https://cdn.jsdelivr.net/npm/@zxing/browser@latest';
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const video = document.getElementById('preview');
+      const qrResult = document.getElementById('qr-result');
+      const manualInput = document.getElementById('manual-code');
+      const manualBtn = document.getElementById('submit-code');
+
+      const codeReader = new BrowserQRCodeReader();
+
+      // Leer QR
+      codeReader.decodeFromVideoDevice(null, video, (result, err) => {
+        if (result) {
+          qrResult.textContent = `Código QR leído: ${result.getText()}`;
+          codeReader.reset(); // Detener lector tras lectura
+        }
+      });
+
+      // Ingreso manual
+      manualBtn.addEventListener('click', () => {
+        const code = manualInput.value.trim();
+        if (code) {
+          qrResult.textContent = `Código ingresado: ${code}`;
+        }
+      });
+    });
+  </script>
+</head>
+<body>
+  <div class="menu-container">
+    <h1>Ingreso Cliente</h1>
+
+    <h2>Escanear QR</h2>
+    <video id="preview" width="300" height="200" style="border:1px solid #ccc;"></video>
+
+    <h2>O ingresar código manual</h2>
+    <input type="text" id="manual-code" placeholder="Ingresa tu código" />
+    <button class="button" id="submit-code">Enviar</button>
+
+    <p id="qr-result" style="margin-top:1rem;"></p>
+  </div>
+</body>
+</html>
