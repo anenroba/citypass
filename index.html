@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CityPASS</title>
-  <link rel="stylesheet" href="estilos.css">
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#4c0c58">
-  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="estilos.css" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#4c0c58" />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
   <script type="text/javascript" src="https://unpkg.com/@zxing/library@latest"></script>
 </head>
 <body>
   <div class="menu-container">
     <h1>¿Quién eres?</h1>
-    <button class="button">Soy Cliente</button>
-    <button class="button">Soy Comercio</button>
+    <button class="button" onclick="location.href='cliente.html'">Soy Cliente</button>
+    <button class="button" onclick="location.href='comercio.html'">Soy Comercio</button>
   </div>
   <script>
     if ('serviceWorker' in navigator) {
