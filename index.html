@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Menú de Inicio</title>
   <link rel="stylesheet" href="estilos.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#4c0c58">
 </head>
 <body>
   <div class="menu-container">
@@ -12,5 +14,18 @@
     <button class="button">Soy Cliente</button>
     <button class="button">Soy Comercio</button>
   </div>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then(registration => {
+            console.log('ServiceWorker registrado con éxito:', registration);
+          })
+          .catch(error => {
+            console.log('Error al registrar ServiceWorker:', error);
+          });
+      });
+    }
+  </script>
 </body>
 </html>
