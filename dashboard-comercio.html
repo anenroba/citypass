@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Pase - City Pass </title>
+</head>
+<body>
+    <div>
+        <header>
+            <img src="https://via.placeholder.com/100x100?text=Restaurante+Sabores" alt="Logo Restaurante Sabores" style="max-width: 100px;">
+            <h1>Mi Pase Digital</h1>
+            <p><strong>City Pass Voy</strong></p>
+        </header>
+
+        <section>
+            <img id="qrCodeImage" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://citypass.voy/pase/PZ2025ABC" alt="Código QR de mi Pase">
+            <p>Presenta este código al personal.</p>
+        </section>
+
+        <section>
+            <h2>Detalles de tu Pase</h2>
+            <div>
+                <span>ID del Pase:</span>
+                <span id="passIdDisplay">PZ2025ABCDE123</span>
+            </div>
+            
+            <div id="packagePassInfo"> 
+                <div>
+                    <span>Almuerzos Restantes:</span>
+                    <span id="almuerzosRemaining">3</span>
+                </div>
+                <div>
+                    <span>Estacionamientos Restantes:</span>
+                    <span id="estacionamientosRemaining">2</span>
+                </div>
+            </div>
+
+            <div>
+                <span>Válido hasta:</span>
+                <span id="expirationDate">31 de diciembre de 2025</span>
+            </div>
+
+            <div> 
+                <span>Nivel:</span>
+                <span id="levelName">Comensal Frecuente</span>
+            </div>
+        </section>
+
+        <footer>
+            <button>Recargar Pase</button>
+            <button>Historial de Usos</button>
+            <img src="https://via.placeholder.com/120x60?text=DondeVoy.cl" alt="Logo DóndeVoy.cl">
+        </footer>
+    </div>
+</body>
+</html>
