@@ -10,21 +10,26 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       const video = document.getElementById('preview');
+      const qrBtn = document.getElementById('btn-qr');
+      const qrSection = document.getElementById('qr-section');
       const qrResult = document.getElementById('qr-result');
+
+      const manualSection = document.getElementById('manual-section');
       const manualInput = document.getElementById('manual-code');
       const manualBtn = document.getElementById('submit-code');
 
       const codeReader = new BrowserQRCodeReader();
 
-      // Leer QR
-      codeReader.decodeFromVideoDevice(null, video, (result, err) => {
-        if (result) {
-          qrResult.textContent = `Código QR leído: ${result.getText()}`;
-          codeReader.reset(); // Detener lector tras lectura
-        }
+      qrBtn.addEventListener('click', () => {
+        qrSection.style.display = 'block';
+        codeReader.decodeFromVideoDevice(null, video, (result, err) => {
+          if (result) {
+            qrResult.textContent = `Código QR leído: ${result.getText()}`;
+            codeReader.reset();
+          }
+        });
       });
 
-      // Ingreso manual
       manualBtn.addEventListener('click', () => {
         const code = manualInput.value.trim();
         if (code) {
@@ -38,12 +43,16 @@
   <div class="menu-container">
     <h1>Ingreso Cliente</h1>
 
-    <h2>Escanear QR</h2>
-    <video id="preview" width="300" height="200" style="border:1px solid #ccc;"></video>
+    <button class="button" id="btn-qr">Leer Código QR</button>
+    <div id="qr-section" style="display:none; margin-top: 1rem;">
+      <video id="preview" width="300" height="200" style="border:1px solid #ccc;"></video>
+    </div>
 
     <h2>O ingresar código manual</h2>
-    <input type="text" id="manual-code" placeholder="Ingresa tu código" />
-    <button class="button" id="submit-code">Enviar</button>
+    <div id="manual-section">
+      <input type="text" id="manual-code" placeholder="Ingresa tu código" />
+      <button class="button" id="submit-code">Enviar</button>
+    </div>
 
     <p id="qr-result" style="margin-top:1rem;"></p>
   </div>
