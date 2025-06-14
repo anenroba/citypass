@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Mi Pase - City Pass</title>
     <link rel="stylesheet" href="estilos.css" />
 </head>
 <body>
     <div>
         <header>
-            <!--<img src="https://via.placeholder.com/100x100?text=Restaurante+Sabores" alt="Logo Restaurante Sabores" style="max-width: 100px;">-->
             <h1>Mi Pase Digital</h1>
             <p><strong>City Pass Voy</strong></p>
         </header>
@@ -19,54 +18,57 @@
             <p>Presenta este código al personal.</p>
         </section>
 
-        <script>
-            const qrData = localStorage.getItem("qrCode");
-
-            if (qrData) {
-                const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrData)}`;
-                document.getElementById("qrCodeImage").src = qrUrl;
-            } else {
-                // Si no hay dato en localStorage, opcionalmente puedes ocultar la imagen o mostrar texto
-                document.getElementById("qrCodeImage").alt = "No se encontró código QR para mostrar.";
-                document.getElementById("qrCodeImage").style.display = "none";
-            }
-        </script>
-
         <section>
             <h2>Detalles de tu Pase</h2>
+
             <div>
-                <span>ID del Pase:</span>
-                <span id="passIdDisplay">PZ2025ABCDE123</span>
-            </div>
-            
-            <div id="packagePassInfo"> 
-                <div>
-                    <span>Almuerzos Restantes:</span>
-                    <span id="almuerzosRemaining">3</span>
-                </div>
-                <div>
-                    <span>Estacionamientos Restantes:</span>
-                    <span id="estacionamientosRemaining">2</span>
-                </div>
+                <span>Fecha de compra:</span>
+                <span id="fechaCompra">Cargando...</span>
             </div>
 
             <div>
-                <span>Válido hasta:</span>
-                <span id="expirationDate">31 de diciembre de 2025</span>
-            </div>
-
-            <div> 
-                <span>Nivel:</span>
-                <span id="levelName">Comensal Frecuente</span>
+                <span>Fecha de vencimiento:</span>
+                <span id="fechaVencimiento">Cargando...</span>
             </div>
         </section>
 
         <footer>
-            <button>Recargar Pase</button>
-            <button>Historial de Usos</button>
             <img src="https://via.placeholder.com/120x60?text=DondeVoy.cl" alt="Logo DóndeVoy.cl">
         </footer>
     </div>
-    <script src="qr-cliente.js"></script>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', async () => {
+            const qrCode = localStorage.getItem("qrCode");
+
+            if (qrCode) {
+                // Mostrar QR
+                const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrCode)}`;
+                document.getElementById("qrCodeImage").src = qrUrl;
+
+                try {
+                    // Obtener datos desde API y guardar en localStorage
+                    const response = await fetch(`https://api-swa.onrender.com/card/${encodeURIComponent(qrCode)}`);
+                    if (!response.ok) throw new Error("Error en la respuesta de la API");
+
+                    const data = await response.json();
+                    localStorage.setItem("QR", JSON.stringify(data));
+
+                    // Mostrar datos en pantalla
+                    document.getElementById("fechaCompra").textContent = data.fecha_compra || "No disponible";
+                    document.getElementById("fechaVencimiento").textContent = data.fecha_vencimiento || "No disponible";
+                } catch (error) {
+                    console.error("Error al obtener datos del QR:", error);
+                    document.getElementById("fechaCompra").textContent = "Error al cargar";
+                    document.getElementById("fechaVencimiento").textContent = "Error al cargar";
+                }
+            } else {
+                document.getElementById("qrCodeImage").alt = "No se encontró código QR para mostrar.";
+                document.getElementById("qrCodeImage").style.display = "none";
+                document.getElementById("fechaCompra").textContent = "QR no disponible";
+                document.getElementById("fechaVencimiento").textContent = "QR no disponible";
+            }
+        });
+    </script>
 </body>
 </html>
