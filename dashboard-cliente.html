@@ -38,37 +38,47 @@
     </div>
 
     <script>
-        window.addEventListener('DOMContentLoaded', async () => {
-            const qrCode = localStorage.getItem("qrCode");
+    function formatearFecha(fechaISO) {
+        if (!fechaISO) return "No disponible";
+        const fecha = new Date(fechaISO);
+        const dia = String(fecha.getDate()).padStart(2, '0');
+        const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+        const anio = String(fecha.getFullYear()).slice(-2);
+        return `${dia}-${mes}-${anio}`;
+    }
 
-            if (qrCode) {
-                // Mostrar QR
-                const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrCode)}`;
-                document.getElementById("qrCodeImage").src = qrUrl;
+    window.addEventListener('DOMContentLoaded', async () => {
+        const qrCode = localStorage.getItem("qrCode");
 
-                try {
-                    // Obtener datos desde API y guardar en localStorage
-                    const response = await fetch(`https://api-swa.onrender.com/card/${encodeURIComponent(qrCode)}`);
-                    if (!response.ok) throw new Error("Error en la respuesta de la API");
+        if (qrCode) {
+            // Mostrar QR
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrCode)}`;
+            document.getElementById("qrCodeImage").src = qrUrl;
 
-                    const data = await response.json();
-                    localStorage.setItem("QR", JSON.stringify(data));
+            try {
+                // Obtener datos desde API y guardar en localStorage
+                const response = await fetch(`https://api-swa.onrender.com/card/${encodeURIComponent(qrCode)}`);
+                if (!response.ok) throw new Error("Error en la respuesta de la API");
 
-                    // Mostrar datos en pantalla
-                    document.getElementById("fechaCompra").textContent = data.fecha_compra || "No disponible";
-                    document.getElementById("fechaVencimiento").textContent = data.fecha_vencimiento || "No disponible";
-                } catch (error) {
-                    console.error("Error al obtener datos del QR:", error);
-                    document.getElementById("fechaCompra").textContent = "Error al cargar";
-                    document.getElementById("fechaVencimiento").textContent = "Error al cargar";
-                }
-            } else {
-                document.getElementById("qrCodeImage").alt = "No se encontró código QR para mostrar.";
-                document.getElementById("qrCodeImage").style.display = "none";
-                document.getElementById("fechaCompra").textContent = "QR no disponible";
-                document.getElementById("fechaVencimiento").textContent = "QR no disponible";
+                const data = await response.json();
+                localStorage.setItem("QR", JSON.stringify(data));
+
+                // Mostrar datos en formato dd-mm-yy
+                document.getElementById("fechaCompra").textContent = formatearFecha(data.fecha_compra);
+                document.getElementById("fechaVencimiento").textContent = formatearFecha(data.fecha_vencimiento);
+            } catch (error) {
+                console.error("Error al obtener datos del QR:", error);
+                document.getElementById("fechaCompra").textContent = "Error al cargar";
+                document.getElementById("fechaVencimiento").textContent = "Error al cargar";
             }
-        });
-    </script>
+        } else {
+            document.getElementById("qrCodeImage").alt = "No se encontró código QR para mostrar.";
+            document.getElementById("qrCodeImage").style.display = "none";
+            document.getElementById("fechaCompra").textContent = "QR no disponible";
+            document.getElementById("fechaVencimiento").textContent = "QR no disponible";
+        }
+    });
+</script>
+
 </body>
 </html>
