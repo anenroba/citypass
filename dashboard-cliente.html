@@ -15,9 +15,22 @@
         </header>
 
         <section>
-            <img id="qrCodeImage" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://citypass.voy/pase/PZ2025ABC" alt="Código QR de mi Pase">
+            <img id="qrCodeImage" alt="Código QR de mi Pase" width="180" height="180">
             <p>Presenta este código al personal.</p>
         </section>
+
+        <script>
+            const qrData = localStorage.getItem("qrCode");
+
+            if (qrData) {
+                const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrData)}`;
+                document.getElementById("qrCodeImage").src = qrUrl;
+            } else {
+                // Si no hay dato en localStorage, opcionalmente puedes ocultar la imagen o mostrar texto
+                document.getElementById("qrCodeImage").alt = "No se encontró código QR para mostrar.";
+                document.getElementById("qrCodeImage").style.display = "none";
+            }
+        </script>
 
         <section>
             <h2>Detalles de tu Pase</h2>
