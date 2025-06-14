@@ -36,7 +36,7 @@
               qrResult.textContent = `Código QR leído: ${code}`;
               codeReader.reset();
               stopCamera();
-              localStorage.setItem(${code});
+              localStorage.setItem(code);
               // Aquí puedes redirigir o validar el código
               window.location.href = `/dashboard-cliente.html?id=${code}`;
             }
