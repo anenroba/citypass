@@ -9,13 +9,13 @@
 <body>
     <div>
         <header>
-            <h1>Mi Pase Digital</h1>
-            <p><strong>City Pass Voy</strong></p>
+            <h1 id="tituloComercio">Mi Pase Digital</h1>
+            <p><strong>City Pass</strong></p>
         </header>
 
         <section>
             <img id="qrCodeImage" alt="Código QR de mi Pase" width="180" height="180">
-            <p>QR Leido.</p>
+            <p>QR Leído.</p>
         </section>
 
         <section>
@@ -31,10 +31,10 @@
                 <span id="fechaVencimiento">Cargando...</span>
             </div>
         </section>
+
         <footer>
             <img src="icon-48.png" alt="Logo DóndeVoy.cl" width="48" height="48">
         </footer>
-
     </div>
 
     <script>
@@ -48,6 +48,12 @@
     }
 
     window.addEventListener('DOMContentLoaded', async () => {
+        // Mostrar nombre del comercio en el título
+        const nombreComercio = localStorage.getItem("nombreComercio");
+        if (nombreComercio) {
+            document.getElementById("tituloComercio").textContent = nombreComercio;
+        }
+
         const qrCode = localStorage.getItem("qrCode");
 
         if (qrCode) {
@@ -63,7 +69,7 @@
                 const data = await response.json();
                 localStorage.setItem("QR", JSON.stringify(data));
 
-                // Mostrar datos en formato dd-mm-yy
+                // Mostrar fechas
                 document.getElementById("fechaCompra").textContent = formatearFecha(data.fecha_compra);
                 document.getElementById("fechaVencimiento").textContent = formatearFecha(data.fecha_vencimiento);
             } catch (error) {
@@ -78,7 +84,6 @@
             document.getElementById("fechaVencimiento").textContent = "QR no disponible";
         }
     });
-</script>
-
+    </script>
 </body>
 </html>
