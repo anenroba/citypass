@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="estilos.css" />
 </head>
 <body>
-    <div>
+    <div class="menu-container">
         <header>
             <h1 id="tituloComercio">Mi Pase Digital</h1>
             <p><strong>City Pass</strong></p>
@@ -32,6 +32,9 @@
             </div>
         </section>
 
+        <button id="registrarVisitaBtn" class="button" style="margin-top: 2rem;">Registrar Visita</button>
+        <p id="mensajeRegistro" style="margin-top: 1rem;"></p>
+
         <footer>
             <img src="icon-48.png" alt="Logo DóndeVoy.cl" width="48" height="48">
         </footer>
@@ -48,7 +51,6 @@
     }
 
     window.addEventListener('DOMContentLoaded', async () => {
-        // Mostrar nombre del comercio en el título
         const nombreComercio = localStorage.getItem("nombreComercio");
         if (nombreComercio) {
             document.getElementById("tituloComercio").textContent = nombreComercio;
@@ -57,19 +59,16 @@
         const qrCode = localStorage.getItem("qrCode");
 
         if (qrCode) {
-            // Mostrar QR
             const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrCode)}`;
             document.getElementById("qrCodeImage").src = qrUrl;
 
             try {
-                // Obtener datos desde API y guardar en localStorage
                 const response = await fetch(`https://api-swa.onrender.com/card/${encodeURIComponent(qrCode)}`);
                 if (!response.ok) throw new Error("Error en la respuesta de la API");
 
                 const data = await response.json();
                 localStorage.setItem("QR", JSON.stringify(data));
 
-                // Mostrar fechas
                 document.getElementById("fechaCompra").textContent = formatearFecha(data.fecha_compra);
                 document.getElementById("fechaVencimiento").textContent = formatearFecha(data.fecha_vencimiento);
             } catch (error) {
@@ -82,6 +81,42 @@
             document.getElementById("qrCodeImage").style.display = "none";
             document.getElementById("fechaCompra").textContent = "QR no disponible";
             document.getElementById("fechaVencimiento").textContent = "QR no disponible";
+        }
+    });
+
+    document.getElementById("registrarVisitaBtn").addEventListener("click", async () => {
+        const nombreComercio = localStorage.getItem("nombreComercio");
+        const codigoQR = localStorage.getItem("qrCode");
+        const mensaje = document.getElementById("mensajeRegistro");
+
+        if (!nombreComercio || !codigoQR) {
+            mensaje.textContent = "Faltan datos para registrar la visita.";
+            mensaje.style.color = "red";
+            return;
+        }
+
+        try {
+            const response = await fetch("https://api-swa.onrender.com/registro-visitas", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    nombre_comercio: nombreComercio,
+                    codigo_qr: codigoQR
+                })
+            });
+
+            if (!response.ok) throw new Error("Error del servidor");
+
+            mensaje.textContent = "✅ Visita registrada exitosamente";
+            mensaje.style.color = "green";
+
+            setTimeout(() => {
+                window.location.href = "dashboard-comercio.html";
+            }, 2000);
+        } catch (err) {
+            console.error("Error al registrar visita:", err);
+            mensaje.textContent = "❌ Error al registrar la visita";
+            mensaje.style.color = "red";
         }
     });
     </script>
