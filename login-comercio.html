@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login Comercio - City Pass</title>
+  <link rel="stylesheet" href="estilos.css" />
+</head>
+<body>
+  <div class="menu-container">
+    <h1>Ingreso Comercio</h1>
+    <form id="loginForm">
+      <input type="text" id="username" placeholder="Usuario" required class="input" />
+      <input type="password" id="password" placeholder="Contraseña" required class="input" />
+      <button type="submit" class="button">Ingresar</button>
+      <div id="errorMsg" class="error-msg"></div>
+    </form>
+  </div>
+
+  <style>
+    .input {
+      display: block;
+      width: 100%;
+      padding: 0.75rem;
+      margin: 0.75rem 0;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 1rem;
+    }
+
+    .error-msg {
+      color: red;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+
+    form {
+      max-width: 300px;
+      margin: 0 auto;
+    }
+  </style>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const errorMsg = document.getElementById('errorMsg');
+
+      if (username === 'comercio123' && password === 'clave123') {
+        localStorage.setItem('comercioLogueado', username);
+        window.location.href = 'dashboard-comercio.html';
+      } else {
+        errorMsg.textContent = 'Usuario o contraseña incorrectos.';
+      }
+    });
+  </script>
+</body>
+</html>
