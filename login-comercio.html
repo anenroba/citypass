@@ -10,7 +10,7 @@
   <div class="menu-container">
     <h1>Ingreso Comercio</h1>
     <form id="loginForm">
-      <input type="text" id="username" placeholder="Usuario" required class="input" />
+      <input type="text" id="username" placeholder="Nombre del comercio" required class="input" />
       <input type="password" id="password" placeholder="Contraseña" required class="input" />
       <button type="submit" class="button">Ingresar</button>
       <div id="errorMsg" class="error-msg"></div>
@@ -41,18 +41,38 @@
   </style>
 
   <script>
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
       e.preventDefault();
 
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value.trim();
       const errorMsg = document.getElementById('errorMsg');
+      errorMsg.textContent = "";
 
-      if (username === 'comercio123' && password === 'clave123') {
-        localStorage.setItem('comercioLogueado', username);
+      try {
+        const response = await fetch('https://api-swa.onrender.com/login-comercio', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            nombre: username,
+            clave: password
+          })
+        });
+
+        if (!response.ok) {
+          const data = await response.json();
+          errorMsg.textContent = data.error || 'Credenciales incorrectas.';
+          return;
+        }
+
+        // Si es exitoso
+        localStorage.setItem('nombreComercio', username);
         window.location.href = 'dashboard-comercio.html';
-      } else {
-        errorMsg.textContent = 'Usuario o contraseña incorrectos.';
+      } catch (err) {
+        console.error(err);
+        errorMsg.textContent = "Error al conectar con el servidor.";
       }
     });
   </script>
