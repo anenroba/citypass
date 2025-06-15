@@ -1,57 +1,93 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Pase - City Pass </title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ingreso Cliente</title>
+  <link rel="stylesheet" href="estilos.css" />
+  <script src="https://unpkg.com/@zxing/library@latest"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const video = document.getElementById('preview');
+      const qrBtn = document.getElementById('btn-qr');
+      const qrSection = document.getElementById('qr-section');
+      const qrResult = document.getElementById('qr-result');
+
+      const manualSection = document.getElementById('manual-section');
+      const manualInput = document.getElementById('manual-code');
+      const manualBtn = document.getElementById('submit-code');
+
+      const codeReader = new ZXing.BrowserQRCodeReader();
+      let currentStream = null;
+
+      function stopCamera() {
+        if (currentStream) {
+          currentStream.getTracks().forEach(track => track.stop());
+          currentStream = null;
+        }
+      }
+
+      async function startQRScanner() {
+        qrSection.style.display = 'block';
+        try {
+          await codeReader.decodeFromVideoDevice(undefined, video, (result, err) => {
+            if (result) {
+              const code = result.getText();
+              qrResult.textContent = `Código QR leído: ${code}`;
+              // Guardar el código en localStorage
+              localStorage.setItem('qrCode', code);
+
+              codeReader.reset();
+              stopCamera();
+              // Aquí puedes redirigir o validar el código
+              window.location.href = `/dashboard-cliente.html?id=${code}`;
+            }
+          });
+
+          const stream = video.srcObject;
+          if (stream) {
+            currentStream = stream;
+          }
+        } catch (error) {
+          if (error.name === 'NotAllowedError') {
+            qrResult.textContent = 'Permiso de cámara denegado. Por favor actívalo en la configuración del navegador.';
+          } else {
+            qrResult.textContent = `Error al acceder a la cámara: ${error.message}`;
+          }
+        }
+      }
+
+      qrBtn.addEventListener('click', () => {
+        startQRScanner();
+      });
+
+      manualBtn.addEventListener('click', () => {
+        const code = manualInput.value.trim();
+        if (code) {
+          qrResult.textContent = `Código ingresado: ${code}`;
+          // Aquí puedes redirigir o validar el código
+          // window.location.href = `/cliente.html?id=${code}`;
+        }
+      });
+    });
+  </script>
 </head>
 <body>
-    <div>
-        <header>
-            <img src="https://via.placeholder.com/100x100?text=Restaurante+Sabores" alt="Logo Restaurante Sabores" style="max-width: 100px;">
-            <h1>Mi Pase Digital</h1>
-            <p><strong>City Pass Voy</strong></p>
-        </header>
+  <div class="menu-container">
+    <h1>Validación Cliente</h1>
 
-        <section>
-            <img id="qrCodeImage" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://citypass.voy/pase/PZ2025ABC" alt="Código QR de mi Pase">
-            <p>Presenta este código al personal.</p>
-        </section>
-
-        <section>
-            <h2>Detalles de tu Pase</h2>
-            <div>
-                <span>ID del Pase:</span>
-                <span id="passIdDisplay">PZ2025ABCDE123</span>
-            </div>
-            
-            <div id="packagePassInfo"> 
-                <div>
-                    <span>Almuerzos Restantes:</span>
-                    <span id="almuerzosRemaining">3</span>
-                </div>
-                <div>
-                    <span>Estacionamientos Restantes:</span>
-                    <span id="estacionamientosRemaining">2</span>
-                </div>
-            </div>
-
-            <div>
-                <span>Válido hasta:</span>
-                <span id="expirationDate">31 de diciembre de 2025</span>
-            </div>
-
-            <div> 
-                <span>Nivel:</span>
-                <span id="levelName">Comensal Frecuente</span>
-            </div>
-        </section>
-
-        <footer>
-            <button>Recargar Pase</button>
-            <button>Historial de Usos</button>
-            <img src="https://via.placeholder.com/120x60?text=DondeVoy.cl" alt="Logo DóndeVoy.cl">
-        </footer>
+    <button class="button" id="btn-qr">Leer Código QR</button>
+    <div id="qr-section" style="display:none; margin-top: 1rem;">
+      <video id="preview" width="300" height="200" style="border:1px solid #ccc;"></video>
     </div>
+
+    <h2>O ingresar código manual</h2>
+    <div id="manual-section">
+      <input type="text" id="manual-code" placeholder="Ingresa tu código" />
+      <button class="button" id="submit-code">Enviar</button>
+    </div>
+
+    <p id="qr-result" style="margin-top:1rem;"></p>
+  </div>
 </body>
 </html>
